@@ -11,6 +11,27 @@ public static class ArraySelector
 
     private static int[] ListSelector(int[] list1, int[] list2, int[] select)
     {
+        int[] result = new int[select.Length]; // Result array has same length as selector
+        int index1 = 0; // Track position in list1
+        int index2 = 0; // Track position in list2
+
+        for (int i = 0; i < select.Length; i++)
+        {
+          if (select[i] == 1)
+          {
+            result[i] = list1[index1];
+            index1++; // Move to next element in list1
+          }
+          else if (select[i] == 2)
+          {
+            result[i] = list2[index2];
+            index2++; // Move to next element in list2
+          }
+          else
+          {
+            throw new ArgumentException("Selector array must only contain 1 or 2");
+          }
+        }
         return [];
     }
 }

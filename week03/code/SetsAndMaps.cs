@@ -94,18 +94,17 @@ public static class SetsAndMaps
         using var client = new HttpClient();
         var json = client.GetStringAsync(uri).Result;
 
-        using var document = JsonDocument.Parse(json);
-        var features = document.RootElement.GetProperty("features");
+        var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+
+        // Deserialize into typed classes
+        var featureCollection = JsonSerializer.Deserialize<FeatureCollection>(json, options);
 
         var results = new List<string>();
 
-        foreach (var feature in features.EnumerateArray())
+        foreach (var feature in featureCollection.Features)
         {
-            var properties = feature.GetProperty("properties");
-
-            var place = properties.GetProperty("place").GetString();
-            var mag = properties.GetProperty("mag").GetDouble();
-
+            var place = feature.Properties.Place;
+            var mag = feature.Properties.Mag;
             results.Add($"{place} - Mag {mag}");
         }
 

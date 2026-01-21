@@ -12,6 +12,9 @@
  */
 
 using Microsoft.VisualBasic.FileIO;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 public class Basketball
 {
@@ -23,14 +26,35 @@ public class Basketball
         reader.TextFieldType = FieldType.Delimited;
         reader.SetDelimiters(",");
         reader.ReadFields(); // ignore header row
-        while (!reader.EndOfData) {
+
+        while (!reader.EndOfData)
+        {
             var fields = reader.ReadFields()!;
             var playerId = fields[0];
             var points = int.Parse(fields[8]);
+
+            if (players.ContainsKey(playerId))
+            {
+                players[playerId] += points;
+            }
+            else
+            {
+                players[playerId] = points;
+            }
         }
 
-        Console.WriteLine($"Players: {{{string.Join(", ", players)}}}");
+        // Convert dictionary to list, sort by total points (descending), take top 10
+        var topPlayers = players
+            .OrderByDescending(p => p.Value)
+            .Take(10)
+            .ToArray();
 
-        var topPlayers = new string[10];
+        Console.WriteLine("Top 10 Players by Career Points");
+        Console.WriteLine("--------------------------------");
+
+        foreach (var player in topPlayers)
+        {
+            Console.WriteLine($"{player.Key}: {player.Value}");
+        }
     }
 }
